@@ -1,9 +1,12 @@
 # 0316 ch6 Data preprocessing
+# 0317
+
 library('dplyr')
 getwd()
 setwd("C:/easy_r")
 exam <- read.csv("csv_exam.csv")
 exam
+#chain - data modeling 끝나고 
 
 #6-1 조건에 맞는 데이터만 추출하기
 exam %>% filter(class==1)
@@ -33,7 +36,24 @@ exam %>%  filter(english < 90 | science < 50)
 #목록에 해당하는 행 추출하기
 # 1,3,5 반에 해당하면 추출
 exam %>% filter(class==1 | class==3 | class==5)
+exam %>% filter(class %in% c(1) )  # %in% , c() 활용
 exam %>% filter(class %in% c(1,3,5) )  # %in% , c() 활용
+
+#subset  원하는 열, 행 추출 가능 
+subset(exam , select=c(1,3,5))  #1, 3, 5열 추출
+subset(exam, class %in% c(1,3,5), select =math )   # %in%
+?subset
+
+with(exam, sum(class)) # with() 함수 안의 dataset 반복입력 X
+
+subset(airquality, Temp > 80, select = c(Ozone, Temp))
+subset(airquality, Day == 1, select = -Temp)
+subset(airquality, select = Ozone:Wind)
+
+with(airquality, subset(Ozone, Temp > 80))  # 이름 계속 안써도 됨
+
+
+
 
 #추출한 행으로 데이터 만들기
 class1 <- exam %>% filter(class==1)
@@ -70,8 +90,21 @@ exam %>% arrange(math)
 #내림차순으로 정렬하기
 exam %>% arrange(desc(math))
 exam %>% arrange(class, math)
-#먼저 반을 기준으로 오름차순 정렬한 후 각 반에서 
-#수학 점수를 기준으로 오름차순 정렬해서 출력
+exam %>% arrange(class, desc(math))
+#먼저 반을 기준으로 오름차순 정렬한 후 
+#각 반에서 수학 점수를 기준으로 오름차순 정렬해서 출력
+
+
+# order, sort - vector c() 
+# arrange  - data.frame 
+order(exam$math)  # math 변수, rank 
+# [1]  9  5  4  3 12 13 14  1  6 10 16  2 11 17 15 20  7 18 19  8
+order(exam$class)
+# [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+sort(order(exam$math))  
+# [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+exam[order(exam$math),]  #index, arrange result 같음
+exam[order(-exam$math),]
 
 #6-5 파생변수 추가하기
 #파생변수 추가하기
